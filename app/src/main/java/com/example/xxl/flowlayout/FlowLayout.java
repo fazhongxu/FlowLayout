@@ -70,31 +70,32 @@ public class FlowLayout extends ViewGroup {
             MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
 
             //获取View实际宽高
-            cWidth = child.getWidth() + lp.leftMargin + lp.rightMargin;
-            cHeight = child.getHeight() + lp.topMargin + lp.bottomMargin;
+            cWidth = child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
+            cHeight = child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
 
             //判断，如果加入child之后，这一行就装不下了，则需要换行摆放
             if (lineWidth + cWidth > widthSize) {
                 //记录最大宽度
                 width = Math.max(lineWidth, cWidth);
 
-                //累加当前高度
-                heigth += lineHeight;
-
                 //开启记录下一行的宽度
                 lineWidth = cWidth;
 
+                //累加当前高度
+                heigth += lineHeight;
+
                 //开启记录下一行的高度
                 lineHeight = cHeight;
+
             } else {
                 lineWidth += cWidth;
-                heigth = Math.max(lineHeight, cHeight);
+                lineHeight = Math.max(lineHeight, cHeight);
             }
 
             //如果是最后一个
             if (i == cCount - 1) {
                 heigth += lineHeight;
-                width = Math.max(lineWidth, cWidth);
+                width = Math.max(lineWidth, width);
             }
 
             setMeasuredDimension(widthMode == MeasureSpec.EXACTLY ? widthSize : width
@@ -112,6 +113,9 @@ public class FlowLayout extends ViewGroup {
     List<Integer> mLineHeight = new ArrayList<>();
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+
+        allViews.clear();
+        mLineHeight.clear();
 
         int width = getWidth();
 
@@ -176,7 +180,7 @@ public class FlowLayout extends ViewGroup {
 
                 int cl = left + lp.leftMargin;
                 int ct = top + lp.topMargin;
-                int cr = cl + child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
+                int cr = cl + child.getMeasuredWidth();
                 int cb = ct + child.getMeasuredHeight();
 
                 Log.e("aaa","cl==="+cl+"ct==="+ct+"cr==="+cr+"ct==="+cb);
@@ -190,5 +194,4 @@ public class FlowLayout extends ViewGroup {
             top += lineHeight;
         }
     }
-
 }
